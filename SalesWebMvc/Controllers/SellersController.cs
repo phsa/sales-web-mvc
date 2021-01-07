@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
 using SalesWebMvc.Services.Exceptions;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SalesWebMvc.Controllers
 {
@@ -22,7 +24,6 @@ namespace SalesWebMvc.Controllers
         public IActionResult Index()
         {
             List<Seller> sellers = _sellerService.FindAll();
-
             return View(sellers);
         }
 
@@ -30,14 +31,24 @@ namespace SalesWebMvc.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "No Id was provided."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             Seller seller = _sellerService.FindById(id.Value);
 
             if (seller == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    Message = "There is no seller for the provided Id."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             return View(seller);
@@ -62,13 +73,23 @@ namespace SalesWebMvc.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "No Id was provided."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             Seller seller = _sellerService.FindById(id.Value);
             if (seller == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    Message = "There is no seller for the provided Id."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             return View(seller);
@@ -86,13 +107,23 @@ namespace SalesWebMvc.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "No Id was provided."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             Seller seller = _sellerService.FindById(id.Value);
             if (seller == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    Message = "There is no seller for the provided Id."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             List<Department> departments = _departmentService.FindAll();
@@ -111,7 +142,12 @@ namespace SalesWebMvc.Controllers
         {
             if (id != seller.Id)
             {
-                return BadRequest();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status409Conflict,
+                    Message = "Id mismatch."
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
 
             try
@@ -119,14 +155,36 @@ namespace SalesWebMvc.Controllers
                 _sellerService.Update(seller);
                 return RedirectToAction(nameof(Index));
             }
-            catch (NotFoundException)
+            catch (NotFoundException e)
             {
-                return NotFound();
+                var routeValues = new
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    e.Message
+                };
+                return base.RedirectToAction(nameof(Error), routeValues);
             }
-            catch (DbConcurrencyException)
+            catch (DbConcurrencyException e)
             {
-                return Conflict();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status503ServiceUnavailable,
+                    e.Message
+                };
+                return base.RedirectToAction(nameof(Error), errorParams);
             }
+        }
+
+        public IActionResult Error(int statusCode, string message)
+        {
+            ErrorViewModel evm = new ErrorViewModel
+            {
+                StatusCode = statusCode,
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(evm);
         }
     }
 }

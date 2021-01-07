@@ -1,10 +1,38 @@
 ﻿@model SalesWebMvc.Models.ViewModels.ErrorViewModel
-@{
-    ViewData["Title"] = "Error";
-}
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<style>
+
+    .error-area {
+        text-align: center;
+        padding: 64px 16px
+    }
+
+    .btn-bottom {
+        margin: 24px 0px;
+    }
+
+</style>
+
+
+<div class="row error-area" >
+    <h4>
+        Oops! Something went wrong.
+    </h4>
+
+    <h1>
+        <strong>@Model.StatusCode</strong> @Model.StatusCodeTitle
+    </h1>
+
+    <h3>
+        @Model.Message
+    </h3>
+
+    <a asp-action="Index" class="btn btn-primary btn-bottom">
+        <span class="glyphicon glyphicon-home" style="margin: 0px 4px"></span>
+        Back to List
+    </a>
+</div>
+
 
 @if (Model.ShowRequestId)
 {
@@ -12,11 +40,3 @@
         <strong>Request ID:</strong> <code>@Model.RequestId</code>
     </p>
 }
-
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-</p>
