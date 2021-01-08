@@ -16,10 +16,12 @@ namespace SalesWebMvc.Models.ViewModels
             {
                 switch (StatusCode)
                 {
-                    case StatusCodes.Status404NotFound:
-                        return "Not Found";
                     case StatusCodes.Status400BadRequest:
                         return "Bad Request";
+                    case StatusCodes.Status404NotFound:
+                        return "Not Found";
+                    case StatusCodes.Status409Conflict:
+                        return "Conflict";
                     case StatusCodes.Status503ServiceUnavailable:
                         return "Service Unavailable";
                     default:

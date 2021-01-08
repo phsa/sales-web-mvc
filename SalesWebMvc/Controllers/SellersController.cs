@@ -101,7 +101,7 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status404NotFound,
                     Message = "There is no seller for the provided Id."
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             return View(seller);
@@ -111,8 +111,20 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerService.RemoveAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _sellerService.RemoveAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (IntegrityException e)
+            {
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status409Conflict,
+                    e.Message
+                };
+                return RedirectToAction(nameof(Error), errorParams);
+            }
         }
 
         public async Task<IActionResult> Edit(int? id)
