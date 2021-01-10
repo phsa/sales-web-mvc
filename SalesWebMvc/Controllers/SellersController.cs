@@ -12,6 +12,8 @@ namespace SalesWebMvc.Controllers
 {
     public class SellersController : Controller
     {
+        private const string NoSellerFoundMessage = "There is no seller for the provided Id.";
+        private const string NoIdProvidedMessage = "No Id was provided.";
 
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
@@ -35,7 +37,7 @@ namespace SalesWebMvc.Controllers
                 var errorParams = new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,
-                    Message = "No Id was provided."
+                    Message = NoIdProvidedMessage
                 };
                 return base.RedirectToAction(nameof(Error), errorParams);
             }
@@ -47,7 +49,7 @@ namespace SalesWebMvc.Controllers
                 var errorParams = new
                 {
                     StatusCode = StatusCodes.Status404NotFound,
-                    Message = "There is no seller for the provided Id."
+                    Message = NoSellerFoundMessage
                 };
                 return base.RedirectToAction(nameof(Error), errorParams);
             }
@@ -88,7 +90,7 @@ namespace SalesWebMvc.Controllers
                 var errorParams = new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,
-                    Message = "No Id was provided."
+                    Message = NoIdProvidedMessage
                 };
                 return base.RedirectToAction(nameof(Error), errorParams);
             }
@@ -99,7 +101,7 @@ namespace SalesWebMvc.Controllers
                 var errorParams = new
                 {
                     StatusCode = StatusCodes.Status404NotFound,
-                    Message = "There is no seller for the provided Id."
+                    Message = NoSellerFoundMessage
                 };
                 return RedirectToAction(nameof(Error), errorParams);
             }
@@ -134,7 +136,7 @@ namespace SalesWebMvc.Controllers
                 var errorParams = new
                 {
                     StatusCode = StatusCodes.Status400BadRequest,
-                    Message = "No Id was provided."
+                    Message = NoIdProvidedMessage
                 };
                 return base.RedirectToAction(nameof(Error), errorParams);
             }
@@ -145,7 +147,7 @@ namespace SalesWebMvc.Controllers
                 var errorParams = new
                 {
                     StatusCode = StatusCodes.Status404NotFound,
-                    Message = "There is no seller for the provided Id."
+                    Message = NoSellerFoundMessage
                 };
                 return base.RedirectToAction(nameof(Error), errorParams);
             }
