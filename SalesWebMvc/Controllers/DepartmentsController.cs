@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SalesWebMvc.Data;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
+using SalesWebMvc.Services;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,32 +13,44 @@ namespace SalesWebMvc.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly SalesWebMvcContext _context;
+        private const string NoDepartmentFoundMessage = "There is no department for the provided Id.";
+        private const string NoIdProvidedMessage = "No Id was provided.";
 
-        public DepartmentsController(SalesWebMvcContext context)
+        private readonly SalesWebMvcContext _context;
+        private readonly DepartmentService _departmentService;
+
+        public DepartmentsController(DepartmentService departmentService, SalesWebMvcContext context)
         {
             _context = context;
+            _departmentService = departmentService;
         }
 
-        // GET: Departments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Department.ToListAsync());
+            return View(await _departmentService.FindAllAsync());
         }
 
-        // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = NoIdProvidedMessage
+                };
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
-            var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _departmentService.FindByIdAsync(id.Value);
             if (department == null)
             {
-                return NotFound();
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    Message = NoDepartmentFoundMessage
+                };
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             return View(department);
@@ -148,6 +162,18 @@ namespace SalesWebMvc.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Error(int statusCode, string message)
+        {
+            ErrorViewModel evm = new ErrorViewModel
+            {
+                StatusCode = statusCode,
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(evm);
         }
 
         private bool DepartmentExists(int id)

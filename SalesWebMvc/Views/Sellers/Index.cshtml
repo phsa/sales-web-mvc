@@ -4,13 +4,12 @@
     ViewData["Title"] = "Sellers";
 }
 
-<h2>@ViewData["Title"]</h2>
 
+<h2>@ViewData["Title"]</h2>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">New Seller</a>
 </p>
-
 
 <table class="table table-striped table-hover">
 
@@ -33,7 +32,6 @@
             </th>
 
             <th>
-
             </th>
         </tr>
     </thead>
@@ -61,10 +59,8 @@
                 </td>
 
                 <td>
-                    <a asp-action="Edit" asp-route-id="@seller.Id">Edit</a>
-                    |
-                    <a asp-action="Details" asp-route-id="@seller.Id">Details</a>
-                    |
+                    <a asp-action="Edit" asp-route-id="@seller.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@seller.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@seller.Id">Delete</a>
                 </td>
 

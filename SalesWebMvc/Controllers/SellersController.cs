@@ -39,7 +39,7 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status400BadRequest,
                     Message = NoIdProvidedMessage
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             Seller seller = await _sellerService.FindByIdAsync(id.Value);
@@ -51,7 +51,7 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status404NotFound,
                     Message = NoSellerFoundMessage
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             return View(seller);
