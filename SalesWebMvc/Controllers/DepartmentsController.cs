@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using SalesWebMvc.Data;
 using SalesWebMvc.Models;
+using SalesWebMvc.Models.ViewModels;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -142,9 +144,16 @@ namespace SalesWebMvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
         private bool DepartmentExists(int id)
         {
             return _context.Department.Any(e => e.Id == id);
         }
+
     }
 }
