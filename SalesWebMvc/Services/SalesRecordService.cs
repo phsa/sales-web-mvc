@@ -17,6 +17,7 @@ namespace SalesWebMvc.Services
             _context = context;
         }
 
+        
         public async Task<List<SalesRecord>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
         {
             var salesQuery = from sale in _context.SalesRecord select sale;

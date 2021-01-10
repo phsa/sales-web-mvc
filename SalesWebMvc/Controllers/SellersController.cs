@@ -83,52 +83,6 @@ namespace SalesWebMvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                var errorParams = new
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    Message = NoIdProvidedMessage
-                };
-                return base.RedirectToAction(nameof(Error), errorParams);
-            }
-
-            Seller seller = await _sellerService.FindByIdAsync(id.Value);
-            if (seller == null)
-            {
-                var errorParams = new
-                {
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Message = NoSellerFoundMessage
-                };
-                return RedirectToAction(nameof(Error), errorParams);
-            }
-
-            return View(seller);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                await _sellerService.RemoveAsync(id);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (IntegrityException e)
-            {
-                var errorParams = new
-                {
-                    StatusCode = StatusCodes.Status409Conflict,
-                    e.Message
-                };
-                return RedirectToAction(nameof(Error), errorParams);
-            }
-        }
-
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -138,7 +92,7 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status400BadRequest,
                     Message = NoIdProvidedMessage
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             Seller seller = await _sellerService.FindByIdAsync(id.Value);
@@ -149,7 +103,7 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status404NotFound,
                     Message = NoSellerFoundMessage
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             List<Department> departments = await _departmentService.FindAllAsync();
@@ -184,7 +138,7 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status409Conflict,
                     Message = "Id mismatch."
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
             }
 
             try
@@ -194,12 +148,12 @@ namespace SalesWebMvc.Controllers
             }
             catch (NotFoundException e)
             {
-                var routeValues = new
+                var errorParams = new
                 {
                     StatusCode = StatusCodes.Status404NotFound,
                     e.Message
                 };
-                return base.RedirectToAction(nameof(Error), routeValues);
+                return RedirectToAction(nameof(Error), errorParams);
             }
             catch (DbConcurrencyException e)
             {
@@ -208,7 +162,53 @@ namespace SalesWebMvc.Controllers
                     StatusCode = StatusCodes.Status503ServiceUnavailable,
                     e.Message
                 };
-                return base.RedirectToAction(nameof(Error), errorParams);
+                return RedirectToAction(nameof(Error), errorParams);
+            }
+        }
+        
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = NoIdProvidedMessage
+                };
+                return RedirectToAction(nameof(Error), errorParams);
+            }
+
+            Seller seller = await _sellerService.FindByIdAsync(id.Value);
+            if (seller == null)
+            {
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    Message = NoSellerFoundMessage
+                };
+                return RedirectToAction(nameof(Error), errorParams);
+            }
+
+            return View(seller);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _sellerService.RemoveAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (IntegrityException e)
+            {
+                var errorParams = new
+                {
+                    StatusCode = StatusCodes.Status409Conflict,
+                    e.Message
+                };
+                return RedirectToAction(nameof(Error), errorParams);
             }
         }
 

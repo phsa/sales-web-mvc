@@ -18,6 +18,7 @@ namespace SalesWebMvc.Services
             _context = context;
         }
 
+        
         public async Task InsertAsync(Seller seller)
         {
             _context.Add(seller);
@@ -42,7 +43,7 @@ namespace SalesWebMvc.Services
         {
             if (!_context.Seller.Any(s => s.Id == sellerToUpdate.Id))
             {
-                throw new NotFoundException("Seller with id = " + sellerToUpdate.Id + "was not found.");
+                throw new NotFoundException("Seller with id = " + sellerToUpdate.Id + " was not found.");
             }
 
             try

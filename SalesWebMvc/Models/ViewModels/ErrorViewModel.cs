@@ -22,6 +22,8 @@ namespace SalesWebMvc.Models.ViewModels
                         return "Not Found";
                     case StatusCodes.Status409Conflict:
                         return "Conflict";
+                    case StatusCodes.Status500InternalServerError:
+                        return "Internal Server Error";
                     case StatusCodes.Status503ServiceUnavailable:
                         return "Service Unavailable";
                     default:
